@@ -31,23 +31,43 @@ A comprehensive AI-powered agent for analyzing RNAseq data with interactive plot
 
 ### Prerequisites
 - Python 3.11+
-- Required packages (install via pip):
+- Required packages (conda env - container tbd):
 
 ```bash
-pip install pandas numpy matplotlib seaborn plotly langchain langchain-mistralai
+pip install pandas numpy logging typing os re json dotenv datetime sqlite3 langchain langchain-mistralai matplotlib seaborn plotly streamlit
 ```
 
-### Files Structure
+### File Structure
 ```
-├── agent.py           # Main agent implementation
-├── test_agent.py      # Test script with sample data
-├── README.md          # This documentation
-└── plots/            # Directory for generated plots
+├── README.md               # Project documentation
+├── data/
+│   └── rnaseq.db           # SQLite database file
+├── plots/                  # Directory for generated plots
+├── src/
+│   ├── agent.py            # Langchain agent orchestrator
+│   ├── main.py             # Minimal CLI agent runner
+│   ├── app.py              # Streamlit web interface for agent interaction
+│   ├── plotter.py          # Plot generation tools for the agent
+│   └── database.py         # Database tools for the agent
+└── tests/
+    └── test.py             # Placeholder for unit tests
 ```
 
 ## Quick Start
 
-### 1. Basic Usage
+### 1. Web App Interface
+
+To explore your RNA-seq results interactively, run the Streamlit app:
+
+```bash
+streamlit run app.py
+```
+
+This launches a browser-based UI for asking questions and visualizing answers from your RNA-seq data using the agent.
+
+### 2. Programmatic Usage
+
+If you want to interact with the agent in a script or notebook, use the following. 
 
 ```python
 from agent import RNAseqAgent
@@ -66,7 +86,9 @@ print(response)
 agent.close()
 ```
 
-### 2. Running Tests
+Note: This is the same logic used in main.py, which serves as a minimal script to initialize and run the agent without a GUI.
+
+### 3. Running Tests - WIP
 
 ```bash
 python test_agent.py
@@ -80,7 +102,8 @@ This will:
 
 ## Database Schema
 
-The agent expects SQLite databases with tables following this naming convention:
+The agent expects SQLite databases with tables respecting the naming convention of nfcore/rnaseq output.
+In particular, the agent expects Deseq2, GSEA, and ORA tables following this naming convention:
 `{sample_subset}_{comparison}_{analysis_type}_{gene_set}`
 
 ### Example Tables
@@ -140,59 +163,6 @@ Show me the distribution of log2 fold changes and create a histogram.
 Also show me the correlation between different statistical measures.
 """)
 ```
-
-## Plot Types and Usage
-
-### 1. Volcano Plot
-- **Purpose**: Visualize differential expression results
-- **Usage**: `Create_Plot volcano`
-- **Features**: 
-  - Color-coded significance levels
-  - Adjustable thresholds
-  - Interactive hover information
-
-### 2. MA Plot
-- **Purpose**: Show relationship between expression level and fold change
-- **Usage**: `Create_Plot ma`
-- **Features**:
-  - Log-scale transformation
-  - Reference line at y=0
-
-### 3. Pathway Enrichment Plot
-- **Purpose**: Display enriched biological pathways
-- **Usage**: `Create_Plot pathway_enrichment`
-- **Features**:
-  - Horizontal bar chart
-  - Color-coded by significance
-  - Customizable number of pathways
-
-### 4. Histogram
-- **Purpose**: Show distribution of values
-- **Usage**: `Create_Plot histogram|column=column_name`
-- **Features**:
-  - Customizable bin count
-  - Automatic column selection
-
-### 5. Scatter Plot
-- **Purpose**: Explore relationships between variables
-- **Usage**: `Create_Plot scatter|x_column=col1|y_column=col2`
-- **Features**:
-  - Automatic column selection
-  - Interactive zoom and pan
-
-### 6. Box Plot
-- **Purpose**: Display data distributions and outliers
-- **Usage**: `Create_Plot boxplot|column=column_name`
-- **Features**:
-  - Quartile visualization
-  - Outlier detection
-
-### 7. Heatmap
-- **Purpose**: Visualize correlation matrices
-- **Usage**: `Create_Plot heatmap`
-- **Features**:
-  - Correlation coefficient display
-  - Color-coded intensity
 
 ## API Reference
 
@@ -292,4 +262,4 @@ For issues and questions:
 
 ---
 
-**Note**: This agent requires a valid Mistral AI API key for natural language processing. The plotting functionality works independently and can be used without the AI features.
+**Note**: This agent requires a valid Mistral AI API key for natural language processing. Mistral API provides a free tier with extensive use at: https://docs.mistral.ai/getting-started/quickstart/. 
