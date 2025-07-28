@@ -37,6 +37,21 @@ A comprehensive AI-powered agent for analyzing RNAseq data with interactive plot
 pip install pandas numpy logging typing os re json dotenv datetime sqlite3 langchain langchain-mistralai matplotlib seaborn plotly streamlit
 ```
 
+### Environment Setup
+This project requires a .env file with the following variables:
+
+```bash
+MISTRAL_API_KEY=your_mistral_api_key_here
+MODEL_NAME=mistralai_model_used
+DB_PATH=path_to_your_database
+```
+
+To run the app:
+1. Create a .env file in the project root.
+2. Add the required keys as shown above.
+3. Save the file.
+4. Run the Streamlit app as usual.
+
 ### File Structure
 ```
 ├── README.md               # Project documentation
