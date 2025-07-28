@@ -22,6 +22,7 @@ class RNAseqAgent:
         # Initialize memory
         self.memory = ConversationBufferMemory(
             memory_key="chat_history",
+            output_key="output", 
             return_messages=True
         )
 
@@ -285,7 +286,6 @@ class RNAseqAgent:
 
             When analyzing RNAseq data:
             - Always check the database schema first if you're unsure about available tables/columns
-            - Unless the user specifies it, limit your queries to 5 rows to avoid overwhelming output
             - Use appropriate significance thresholds (e.g., padj < 0.05, |log2fc| > 1)
             - Provide biological context in your interpretations
 
