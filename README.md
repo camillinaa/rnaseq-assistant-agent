@@ -1,14 +1,21 @@
 # RNAseq Analysis Agent
 
-A comprehensive AI-powered agent for analyzing RNAseq data with interactive plotting capabilities. This agent can query SQLite databases containing RNAseq analysis results and generate various types of visualizations to help interpret the data.
+A comprehensive AI-powered agent for analyzing RNAseq data with interactive plotting capabilities. This agent can query SQLite databases containing nfcore/rnaseq output and generate various types of visualizations to help researchers interpret their data.
 
 ## Features
 
 ### 🔍 **Database Operations**
-- Connect to SQLite databases containing RNAseq data
+- Connect to SQLite databases containing nfcore/rnaseq output
 - Execute SQL queries with safety checks
 - Retrieve database schema information
-- Handle multiple table types (differential expression, pathway enrichment, etc.)
+- Handle multiple table types (counts matrix, correlation, dimensionality reduction, differential expression, pathway enrichment using various gene sets, etc.)
+
+### 🤖 **AI-Powered Analysis**
+- Natural language query processing - understanding and answering
+- Intelligent data retrieval from vast RNAseq knowledge base
+- Intelligent interactive plot type selection and generation based on question asked and data
+- In depth biological context interpretation
+- Statistical significance assessment
 
 ### 📊 **Interactive Plotting**
 - **Volcano Plots**: Visualize differential expression results
@@ -19,12 +26,6 @@ A comprehensive AI-powered agent for analyzing RNAseq data with interactive plot
 - **Box Plots**: Display data distributions and outliers
 - **Heatmaps**: Visualize correlation matrices
 - **Bar Plots**: Show categorical data comparisons
-
-### 🤖 **AI-Powered Analysis**
-- Natural language query processing
-- Automatic plot type selection based on data
-- Biological context interpretation
-- Statistical significance assessment
 
 ## Installation
 
