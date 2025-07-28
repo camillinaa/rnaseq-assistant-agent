@@ -1,0 +1,6 @@
+.env
+data/rnaseq.db
+data
+rnaseq.db
+omics_query_rnaseq_agent.pptx
+.DS_Store

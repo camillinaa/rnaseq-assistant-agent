@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'Aptos';
+    src: url('./fonts/Aptos-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+@font-face {
+font-family: 'Aptos';
+src: url('./fonts/Aptos-Bold.ttf') format('truetype');
+font-weight: 700;
+font-style: normal;
+}
+
+body, * {
+font-family: 'Aptos', sans-serif;
+}

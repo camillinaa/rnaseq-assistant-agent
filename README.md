@@ -10,7 +10,7 @@ A comprehensive AI-powered agent for analyzing RNAseq data with interactive plot
 - Retrieve database schema information
 - Handle multiple table types (counts matrix, correlation, dimensionality reduction, differential expression, pathway enrichment using various gene sets, etc.)
 
-### 🤖 **AI-Powered Analysis**
+### 🤖 **Conversational AI-Powered Analysis**
 - Natural language query processing - understanding and answering
 - Intelligent data retrieval from vast RNAseq knowledge base
 - Intelligent interactive plot type selection and generation based on question asked and data
@@ -34,7 +34,7 @@ A comprehensive AI-powered agent for analyzing RNAseq data with interactive plot
 - Required packages (conda env - container tbd):
 
 ```bash
-pip install pandas numpy logging typing os re json dotenv datetime sqlite3 langchain langchain-mistralai matplotlib seaborn plotly streamlit
+pip install pandas numpy logging typing os re json dotenv datetime sqlite3 langchain langchain-mistralai matplotlib seaborn plotly dash
 ```
 
 ### Environment Setup
@@ -61,7 +61,7 @@ To run the app:
 ├── src/
 │   ├── agent.py            # Langchain agent orchestrator
 │   ├── main.py             # Minimal CLI agent runner
-│   ├── app.py              # Streamlit web interface for agent interaction
+│   ├── app.py              # Dash web conversational interface for agent interaction
 │   ├── plotter.py          # Plot generation tools for the agent
 │   └── database.py         # Database tools for the agent
 └── tests/
@@ -72,10 +72,10 @@ To run the app:
 
 ### 1. Web App Interface
 
-To explore your RNA-seq results interactively, run the Streamlit app:
+To explore your RNA-seq results interactively, run the Dash app:
 
 ```bash
-streamlit run app.py
+python src/app.py
 ```
 
 This launches a browser-based UI for asking questions and visualizing answers from your RNA-seq data using the agent.
