@@ -8,7 +8,8 @@ from rich.markdown import Markdown
 import mistune
 import smtplib
 from email.message import EmailMessage
-from main import create_agent  
+from main import create_agent
+import datetime
 
 # Instantiate your agent
 agent = create_agent()
@@ -42,23 +43,25 @@ app.layout = dmc.MantineProvider([
                     "Export",
                     id="export-button",
                     style={
-                        "position": "absolute",
-                        "top": "10px",
-                        "right": "10px",
-                        "background": "transparent",
-                        "border": "none",
+                        "background": "#f8f9fa",  # Light grey background
+                        "border": "1px solid #d6d9dc",  # Thin darker grey border
                         "outline": "none",
-                        "color": "#666",
-                        "fontSize": "13px",
+                        "color": "#495057",  # Darker text for better contrast
+                        "fontSize": "11px",
                         "cursor": "pointer",
-                        "padding": "6px 12px",
-                        "borderRadius": "6px",
+                        "padding": "6px 10px",
+                        "borderRadius": "8px",
                         "transition": "all 0.2s ease",
-                        "zIndex": "10"
+                        "marginBottom": "0px",  # Small gap between button and chat area
+                        "alignSelf": "flex-end"  # Align to the right
                     }
-                )
-            ], style={"position": "relative"}),
-            
+                ),
+                dcc.Download(id="download-chat")
+            ], style={
+                "display": "flex", 
+                "justifyContent": "flex-end",  # Push button to the right
+                "width": "100%"
+            }),
             # Chat window container
             html.Div([
                 html.Div(
@@ -147,7 +150,7 @@ app.layout = dmc.MantineProvider([
         dcc.Store(id='trigger-bot-response', data=0),
         
         html.Div([
-            html.P("Conversations are not saved and will reset if refreshed.", 
+            html.P("Conversations are not saved and will reset if refreshed. Use the export button to download your chat history.", 
                   style={"fontSize": "12px", "color": "#888", "margin": "10px 0 0 0", "textAlign": "center"})
         ]),
 
@@ -155,10 +158,11 @@ app.layout = dmc.MantineProvider([
         dmc.Stack(
             id="support-drawer",
             children=[
-                dmc.Stack(
+                html.Div( # html.Div is more reliable for clickable elements in Dash
                     "💬 Support",
                     id="open-support-form",
                     style={
+                        "height": "36px",
                         "textAlign": "center",
                         "padding": "8px 20px",
                         "fontSize": "13px",
@@ -375,6 +379,38 @@ def process_bot_response(trigger_counter, chat_history):
 
 
 @app.callback(
+    Output("download-chat", "data"),
+    Input("export-button", "n_clicks"),
+    State("chat-history", "data"), 
+    prevent_initial_call=True
+)
+def export_chat(n_clicks, chat_data):
+    if not chat_data:
+        return None
+    
+    # Create the text content
+    chat_text = f"Chat Export - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+    chat_text += "=" * 50 + "\n\n"
+    
+    for message in chat_data:
+        # Adjust these keys based on your chat message structure
+        role = message.get("role", "user")  # or however you store the role
+        content = message.get("content", "")  # or however you store the message content
+        timestamp = message.get("timestamp", "")  # if you have timestamps
+        
+        if role == "user":
+            chat_text += f"User: {content}\n\n"
+        else:
+            chat_text += f"Assistant: {content}\n\n"
+    
+    # Return the download
+    return dict(
+        content=chat_text,
+        filename=f"chat_export_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    )
+    
+
+@app.callback(
     [Output("support-drawer", "style"),
      Output("support-drawer-body", "style")],
     [Input("open-support-form", "n_clicks")],
@@ -382,12 +418,20 @@ def process_bot_response(trigger_counter, chat_history):
     prevent_initial_call=True
 )
 def slide_support_drawer(n_clicks, style):
+    new_style = style.copy()
+    
     if style["height"] == "36px":
-        style["height"] = "350px"
-        return style, {"display": "block", "padding": "0 20px 20px 20px", "backgroundColor": "white", "border": "1px solid #e0e0e0", "borderTop": "none"}
+        new_style["height"] = "310px"
+        return new_style, {
+            "display": "block", 
+            "padding": "0 20px 20px 20px", 
+            "backgroundColor": "white", 
+            "border": "1px solid #e0e0e0", 
+            "borderTop": "none"
+        }
     else:
-        style["height"] = "36px"
-        return style, {"display": "none"}
+        new_style["height"] = "36px"
+        return new_style, {"display": "none"}
 
 
 @app.callback(

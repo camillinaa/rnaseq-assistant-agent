@@ -294,7 +294,7 @@ class RNAseqAgent:
 
             # Run the agent
             contextualized_question = f"{system_context}\n\nUser question: {question}"
-            result = self.agent({"input": contextualized_question})
+            result = self.agent.invoke({"input": contextualized_question})
             answer = result.get("output", "")
 
             # Search intermediate steps for plot_filename
