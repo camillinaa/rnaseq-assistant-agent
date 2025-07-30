@@ -23,7 +23,8 @@ def create_agent():
 def run_cli():
     agent = create_agent()
     questions = [
-        "Plot the differentially expressed ORA pathways between flattening yes and no using go gene set"
+        #"Plot the differentially expressed ORA pathways between flattening yes and no using go gene set",
+        "What genes are upregulated in flattening yes vs no?"
     ]
     try:
         for question in questions:

@@ -1,28 +1,40 @@
 import pandas as pd
 import logging
 import time
-from typing import List
+import random
+from typing import List, Dict, Any
 import streamlit as st
 
 logger = logging.getLogger(__name__)
 
-def retry_api_call(func, *args, max_retries=3, **kwargs):
-    """Retry API calls with exponential backoff"""
+def invoke_with_retry(agent, input_dict: Dict[str, str], max_retries: int = 5) -> Dict[str, Any]:
+    """Invoke agent with retry logic for 429 errors"""
+    
     for attempt in range(max_retries):
         try:
-            return func(*args, **kwargs)
+            return agent.invoke(input_dict)
+            
         except Exception as e:
-            if attempt == max_retries - 1:  # Last attempt
+            error_str = str(e).lower()
+            
+            # Check if it's a rate limit error
+            if "429" in error_str or "rate limit" in error_str or "capacity" in error_str:
+                if attempt < max_retries - 1:
+                    # Exponential backoff with jitter
+                    delay = min(2 ** attempt + random.uniform(0, 1), 30)
+                    print(f"MistralAI at capacity, retrying in {delay:.1f}s... (attempt {attempt + 1}/{max_retries})")
+                    time.sleep(delay)
+                    continue
+                else:
+                    # All retries exhausted - return in the same format as normal agent response
+                    return {
+                        "output": "MistralAI is currently at capacity. Please try again in a few moments.",
+                        "intermediate_steps": []
+                    }
+            else:
+                # Not a rate limit error, re-raise
                 raise e
             
-            # Check if it's a retryable error
-            error_msg = str(e).lower()
-            if "429" in error_msg or "rate limit" in error_msg or "service tier" in error_msg:
-                wait_time = 2 ** attempt  # 1s, 2s, 4s
-                logger.warning(f"API call failed (attempt {attempt + 1}), retrying in {wait_time}s...")
-                time.sleep(wait_time)
-            else:
-                raise e  # Don't retry non-rate-limit errors
             
 def render_cleaned_markdown(text):
     lines = text.strip().splitlines()

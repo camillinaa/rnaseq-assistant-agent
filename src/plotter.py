@@ -1,14 +1,16 @@
-import utils 
 import logging
-import numpy as np
-import pandas as pd
 import os
+import yaml
+import pandas as pd
+import numpy as np
 from typing import List, Dict, Any
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.io as pio
+import seaborn as sns
 from datetime import datetime
+import utils 
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +22,10 @@ class RNAseqPlotter:
         self.output_dir = output_dir
         self.last_query_data = None  # Store data from last query for plotting
         os.makedirs(output_dir, exist_ok=True)
-
-        # Set default plotly theme
-        pio.templates.default = "plotly_white"
+        pio.templates.default = "plotly_white" # Set default plotly theme
+        instructions_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'plot_instructions.yaml')
+        with open(instructions_path, 'r') as file:
+            self.plot_instructions = yaml.safe_load(file)
 
     def store_query_data(self, data: List[Dict], query_info: str = ""):
         """Store data from SQL query for potential plotting"""
@@ -60,7 +63,15 @@ class RNAseqPlotter:
             - Use a variable named plot_filename to save the plot, do not hardcode any filename string in fig.write_html(). The variable plot_filename will be passed into the execution environment.
             - Return just the Python code, no explanations
             - Choose appropriate columns based on the data type and plot type
+            
+            Follow these instructions for the {plot_type} plot specifically: {self.plot_instructions.get(plot_type, {}).get('instructions', 'No instructions available.')}
             """
+            
+            # DEBUG: Print the code prompt sent to LLM
+            print("="*50)
+            print("CODE PROMPT:")
+            print(code_prompt)
+            print("="*50)
             
             # Get code from LLM
             generated_code = self.llm.invoke(code_prompt).content

@@ -35,33 +35,53 @@ app.layout = dmc.MantineProvider([
             ], style={"justifyContent": "space-between", "alignItems": "center", "width": "100%"})
         ], style={"marginBottom": "20px"}),
 
-        # Chat area with export button
+        # Chat area with export and clear buttons
         dmc.Stack([
-            # Chat header with export button positioned top-right
+            # Chat header with buttons
             html.Div([
                 html.Button(
-                    "Export",
-                    id="export-button",
+                    "Clear",
+                    id="clear-button",
                     style={
-                        "background": "#f8f9fa",  # Light grey background
-                        "border": "1px solid #d6d9dc",  # Thin darker grey border
+                        "background": "#f8f9fa",
+                        "border": "1px solid #d6d9dc",
                         "outline": "none",
-                        "color": "#495057",  # Darker text for better contrast
+                        "color": "#495057",
                         "fontSize": "11px",
                         "cursor": "pointer",
                         "padding": "6px 10px",
                         "borderRadius": "8px",
                         "transition": "all 0.2s ease",
-                        "marginBottom": "0px",  # Small gap between button and chat area
-                        "alignSelf": "flex-end"  # Align to the right
+                        "marginBottom": "0px",
+                        "minWidth": "60px"
+                    }
+                ),
+                html.Button(
+                    "Export",
+                    id="export-button",
+                    style={
+                        "background": "#f8f9fa",
+                        "border": "1px solid #d6d9dc",
+                        "outline": "none",
+                        "color": "#495057",
+                        "fontSize": "11px",
+                        "cursor": "pointer",
+                        "padding": "6px 10px",
+                        "borderRadius": "8px",
+                        "transition": "all 0.2s ease",
+                        "marginBottom": "0px",
+                        "minWidth": "60px"     # Ensure width matches Export
+
                     }
                 ),
                 dcc.Download(id="download-chat")
             ], style={
-                "display": "flex", 
-                "justifyContent": "flex-end",  # Push button to the right
+                "display": "flex",
+                "justifyContent": "flex-end",  # Align the button group to the right
+                "gap": "8px",                  # Space between Clear and Export buttons
                 "width": "100%"
             }),
+            
             # Chat window container
             html.Div([
                 html.Div(
@@ -379,6 +399,16 @@ def process_bot_response(trigger_counter, chat_history):
 
 
 @app.callback(
+    Output('chat-window', 'children', allow_duplicate=True),
+    Output('chat-history', 'data', allow_duplicate=True),
+    Input('clear-button', 'n_clicks'),
+    prevent_initial_call=True
+)
+def clear_chat(n_clicks):
+    return [], []
+
+
+@app.callback(
     Output("download-chat", "data"),
     Input("export-button", "n_clicks"),
     State("chat-history", "data"), 
@@ -460,7 +490,6 @@ def send_support_email(n_clicks, email, message):
         return f"❌ Failed to send message: {str(e)}"
 
 
-# Add CSS for hover effects and animations
 app.index_string = '''
 <!DOCTYPE html>
 <html>
@@ -469,46 +498,6 @@ app.index_string = '''
         <title>{%title%}</title>
         {%favicon%}
         {%css%}
-        <style>
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            
-            #export-button:hover {
-                background-color: rgba(0,0,0,0.05) !important;
-                color: #333 !important;
-            }
-            
-            #open-support-form:hover {
-                background-color: #e9ecef !important;
-            }
-            
-            /* Custom scrollbar for chat */
-            #chat-window::-webkit-scrollbar {
-                width: 6px;
-            }
-            
-            #chat-window::-webkit-scrollbar-track {
-                background: #f1f1f1;
-                border-radius: 3px;
-            }
-            
-            #chat-window::-webkit-scrollbar-thumb {
-                background: #c1c1c1;
-                border-radius: 3px;
-            }
-            
-            #chat-window::-webkit-scrollbar-thumb:hover {
-                background: #a8a8a8;
-            }
-            
-            /* Input focus effects */
-            input:focus, textarea:focus {
-                border-color: #007bff !important;
-                box-shadow: 0 0 0 2px rgba(0,123,255,0.15) !important;
-            }
-        </style>
     </head>
     <body>
         {%app_entry%}
